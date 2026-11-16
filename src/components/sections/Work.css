@@ -128,12 +128,10 @@
   letter-spacing: 0.02em;
 }
 
+/* Cada captura se muestra entera, con su propia proporción (la dan width/height). */
 .project__mock img {
   width: 100%;
   height: auto;
-  aspect-ratio: 16 / 10;
-  object-fit: cover;
-  object-position: top;
 }
 
 .project__glare {

@@ -26,8 +26,8 @@ export interface Project {
 /**
  * PORTAFOLIO
  * ----------
- * Agrega aquí los proyectos reales del estudio. Mientras la lista esté vacía,
- * la sección muestra un estado "en preparación" (no se inventan proyectos).
+ * Proyectos reales del estudio. Si la lista queda vacía, la sección muestra
+ * un estado "en preparación" (no se inventan proyectos).
  *
  * Ejemplo de entrada:
  *
@@ -42,4 +42,19 @@ export interface Project {
  *   year: '2026',
  * },
  */
-export const projects: Project[] = []
+export const projects: Project[] = [
+  {
+    id: 'quiere-cacao',
+    name: 'Quiere Cacao',
+    category: 'Tienda en línea',
+    description:
+      'Sitio y tienda en línea para una marca de cacao orgánico con especias de Cali: presentación del producto, compra en línea y contacto directo por WhatsApp.',
+    image: {
+      src: '/proyectos/quiere-cacao.webp',
+      srcSet: '/proyectos/quiere-cacao-960.webp 960w, /proyectos/quiere-cacao.webp 1901w',
+      alt: 'Página de inicio de Quiere Cacao: el titular «Cacao puro, alma de especias» junto a una bolsa dorada de cacao orgánico rodeada de granos de cacao.',
+      width: 1901,
+      height: 863,
+    },
+  },
+]

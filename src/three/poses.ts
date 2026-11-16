@@ -30,6 +30,12 @@ export interface Pose {
    * como el resto: lo resuelve el Director a partir del scroll.
    */
   follow: number
+  /**
+   * Fracción (0–1) del recorrido hacia la sección siguiente durante la cual la
+   * pieza conserva esta pose. Sirve para que salga de pantalla con su contenido
+   * antes de transformarse, en lugar de cruzarse con él.
+   */
+  hold: number
 }
 
 export type SectionKey = 'hero' | 'about' | 'services' | 'process' | 'work' | 'principles' | 'cta'
@@ -40,7 +46,7 @@ export const POSE_KEYS: (keyof Pose)[] = [
 
 const base: Pose = {
   x: 0, y: 0, scale: 1, rx: 0.48, ry: 0.72, spin: 0.1,
-  explode: 0, ring: 0, scatter: 0, build: 5, glow: 0.6, camZ: 10, exposure: 1, follow: 0,
+  explode: 0, ring: 0, scatter: 0, build: 5, glow: 0.6, camZ: 10, exposure: 1, follow: 0, hold: 0,
 }
 
 const pose = (p: Partial<Pose>): Pose => ({ ...base, ...p })
@@ -65,8 +71,8 @@ export const desktopPoses: PoseSet = {
     out: pose({ x: 0.38, y: 0.1, scale: 0.98, build: 5, spin: 0.16, rx: 0.42, glow: 1.5, camZ: 9.6 }),
   },
   work: {
-    in: pose({ x: 0.72, y: 0.46, scale: 0.42, explode: 0.3, spin: 0.14, glow: 0.5, exposure: 0.85, camZ: 10.5, follow: 1 }),
-    out: pose({ x: 0.72, y: 0.46, scale: 0.42, explode: 0.3, spin: 0.14, glow: 0.5, exposure: 0.85, camZ: 10.5, follow: 1 }),
+    in: pose({ x: 0.72, y: 0.46, scale: 0.42, explode: 0.3, spin: 0.14, glow: 0.5, exposure: 0.85, camZ: 10.5, follow: 1, hold: 0.5 }),
+    out: pose({ x: 0.72, y: 0.46, scale: 0.42, explode: 0.3, spin: 0.14, glow: 0.5, exposure: 0.85, camZ: 10.5, follow: 1, hold: 0.5 }),
   },
   principles: {
     in: pose({ x: 0, y: -0.06, scale: 0.62, ring: 1, rx: 1.24, ry: 0, spin: 0.05, glow: 0.4, exposure: 0.46, camZ: 11 }),
@@ -98,8 +104,8 @@ export const mobilePoses: PoseSet = {
     out: pose({ x: 0, y: 0.38, scale: 0.6, build: 5, spin: 0.16, rx: 0.42, glow: 1.5 }),
   },
   work: {
-    in: pose({ x: 0.6, y: 0.72, scale: 0.22, explode: 0.3, spin: 0.14, glow: 0.5, exposure: 0.7, follow: 1 }),
-    out: pose({ x: 0.6, y: 0.72, scale: 0.22, explode: 0.3, spin: 0.14, glow: 0.5, exposure: 0.7, follow: 1 }),
+    in: pose({ x: 0.6, y: 0.72, scale: 0.22, explode: 0.3, spin: 0.14, glow: 0.5, exposure: 0.7, follow: 1, hold: 0.5 }),
+    out: pose({ x: 0.6, y: 0.72, scale: 0.22, explode: 0.3, spin: 0.14, glow: 0.5, exposure: 0.7, follow: 1, hold: 0.5 }),
   },
   principles: {
     in: pose({ x: 0, y: 0, scale: 0.6, explode: 1.5, spin: 0.05, glow: 0.3, exposure: 0.34 }),

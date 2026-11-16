@@ -71,7 +71,8 @@ function samplePose(keys: Key[], center: number, out: Pose): number {
   const linear = clamp((center - a.y) / (b.y - a.y || 1))
   // Dentro de una sección el avance es lineal (lo dicta el scroll);
   // entre secciones, la transición acelera y frena suavemente.
-  const t = a.section === b.section ? linear : smootherstep(linear)
+  const hold = a.pose.hold
+  const t = a.section === b.section ? linear : smootherstep(clamp((linear - hold) / (1 - hold)))
   for (const k of POSE_KEYS) out[k] = lerp(a.pose[k], b.pose[k], t)
   return lerp(followOf(a, center), followOf(b, center), t)
 }
