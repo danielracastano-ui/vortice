@@ -23,6 +23,29 @@ export function validateContact(values: ContactPayload, consent: boolean): Conta
   return errors
 }
 
+/** Tiempo máximo de espera de la respuesta del servidor. */
+const SUBMIT_TIMEOUT_MS = 30000
+
+/**
+ * Por qué falló un envío:
+ *  - offline:  no hubo respuesta (sin conexión, o la petición fue bloqueada).
+ *  - timeout:  el servidor tardó más de lo razonable.
+ *  - rejected: el servidor respondió con un error; `status` es el código HTTP.
+ */
+export type ContactFailure = 'offline' | 'timeout' | 'rejected'
+
+export class ContactError extends Error {
+  readonly kind: ContactFailure
+  readonly status?: number
+
+  constructor(kind: ContactFailure, status?: number, cause?: unknown) {
+    super(status ? `Envío rechazado (HTTP ${status})` : `Envío fallido (${kind})`, { cause })
+    this.name = 'ContactError'
+    this.kind = kind
+    this.status = status
+  }
+}
+
 /** Nombre del formulario en Netlify Forms. Debe coincidir con el <form> estático de index.html. */
 export const NETLIFY_FORM_NAME = 'contacto'
 
@@ -63,11 +86,15 @@ export async function submitContact(values: ContactPayload): Promise<void> {
       }
 
   const controller = new AbortController()
-  const timeout = window.setTimeout(() => controller.abort(), 15000)
+  const timeout = window.setTimeout(() => controller.abort(), SUBMIT_TIMEOUT_MS)
+  let response: Response
   try {
-    const response = await fetch(endpoint || '/', { method: 'POST', ...request, signal: controller.signal })
-    if (!response.ok) throw new Error(`HTTP ${response.status}`)
+    response = await fetch(endpoint || '/', { method: 'POST', ...request, signal: controller.signal })
+  } catch (cause) {
+    // fetch solo lanza si se agotó el tiempo o si no hubo respuesta del servidor.
+    throw new ContactError(controller.signal.aborted ? 'timeout' : 'offline', undefined, cause)
   } finally {
     window.clearTimeout(timeout)
   }
+  if (!response.ok) throw new ContactError('rejected', response.status)
 }

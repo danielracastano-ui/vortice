@@ -2,6 +2,7 @@ import { useId, useRef, useState, type FormEvent } from 'react'
 import { site } from '../../config/site'
 import { services } from '../../content/services'
 import {
+  ContactError,
   submitContact,
   validateContact,
   type ContactErrors,
@@ -15,6 +16,18 @@ type Status = 'idle' | 'submitting' | 'success' | 'error'
 const empty: ContactPayload = { name: '', email: '', company: '', services: [], message: '' }
 const ERROR_ORDER = ['name', 'email', 'message', 'consent'] as const
 
+/** Explica el fallo con su causa: sirve al visitante y permite diagnosticar. */
+function failureText(error: ContactError | null): string {
+  switch (error?.kind) {
+    case 'timeout':
+      return 'El envío está tardando demasiado. Inténtalo de nuevo en un momento.'
+    case 'rejected':
+      return `El servidor no aceptó el mensaje (código ${error.status}). Inténtalo de nuevo más tarde.`
+    default:
+      return 'No pudimos conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.'
+  }
+}
+
 export function ContactForm({ onDone }: { onDone: () => void }) {
   const id = useId()
   const formRef = useRef<HTMLFormElement>(null)
@@ -24,6 +37,7 @@ export function ContactForm({ onDone }: { onDone: () => void }) {
   const [honeypot, setHoneypot] = useState('')
   const [errors, setErrors] = useState<ContactErrors>({})
   const [status, setStatus] = useState<Status>('idle')
+  const [failure, setFailure] = useState<ContactError | null>(null)
 
   const set = <K extends keyof ContactPayload>(key: K, value: ContactPayload[K]) => {
     setValues((v) => ({ ...v, [key]: value }))
@@ -56,7 +70,9 @@ export function ContactForm({ onDone }: { onDone: () => void }) {
       if (!honeypot) await submitContact(values)
       setStatus('success')
       requestAnimationFrame(() => successRef.current?.focus())
-    } catch {
+    } catch (error) {
+      console.error('Fallo al enviar el formulario de contacto:', error)
+      setFailure(error instanceof ContactError ? error : null)
       setStatus('error')
     }
   }
@@ -216,13 +232,24 @@ export function ContactForm({ onDone }: { onDone: () => void }) {
           <p className="contact-form__failure">
             <Alert width={16} height={16} />
             <span>
-              No pudimos enviar tu mensaje. Revisa tu conexión e inténtalo de nuevo.
-              {site.contact.email && (
+              {failureText(failure)}
+              {site.contact.email ? (
                 <>
                   {' '}
                   También puedes escribirnos a{' '}
                   <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a>.
                 </>
+              ) : (
+                site.socials[0] && (
+                  <>
+                    {' '}
+                    También puedes escribirnos por{' '}
+                    <a href={site.socials[0].href} target="_blank" rel="noopener noreferrer">
+                      {site.socials[0].label}
+                    </a>
+                    .
+                  </>
+                )
               )}
             </span>
           </p>
