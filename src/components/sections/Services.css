@@ -1,0 +1,189 @@
+.services {
+  padding-bottom: 0;
+}
+
+.services__head {
+  display: grid;
+  gap: clamp(18px, 2.4vw, 32px);
+  max-width: 62rem;
+}
+
+.services__lead {
+  max-width: 36rem;
+}
+
+.services__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  margin-top: clamp(32px, 6vw, 80px);
+}
+
+/* ───── Lista ───── */
+
+.service {
+  position: relative;
+  display: grid;
+  align-content: center;
+  gap: 16px;
+  padding-block: 44px;
+  border-top: 1px solid var(--line);
+  scroll-margin-top: 20vh;
+}
+
+.service__index {
+  color: var(--ash);
+}
+
+.service__index span {
+  margin-right: 10px;
+  color: var(--lime);
+}
+
+.service__name {
+  font-size: clamp(2.5rem, 6.4vw, 6.5rem);
+  font-weight: 620;
+  font-variation-settings: 'wdth' 82;
+  letter-spacing: -0.045em;
+  line-height: 0.92;
+}
+
+.service__description {
+  max-width: 34rem;
+  font-size: var(--fs-lead);
+  line-height: 1.4;
+  color: var(--bone);
+}
+
+.service__benefit {
+  display: grid;
+  gap: 8px;
+  max-width: 30rem;
+  padding-left: 18px;
+  border-left: 1px solid var(--violet);
+  color: var(--bone-2);
+}
+
+.service__benefit .mono {
+  color: var(--ash);
+}
+
+/* Hueco propio de cada servicio (móvil): aquí se dibuja su emblema 3D. */
+.service__slot {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: min(64vw, 300px);
+  color: var(--bone-2);
+}
+
+.service-icon {
+  width: min(46%, 180px);
+  height: auto;
+}
+
+.services__stage {
+  display: none;
+}
+
+/* ───── Escritorio: lista a la izquierda, escena fija a la derecha ───── */
+
+@media (min-width: 900px) {
+  .services__body {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    column-gap: var(--gutter);
+  }
+
+  .service {
+    min-height: 74vh;
+    padding-block: 8vh;
+  }
+
+  /* Los servicios fuera de foco se atenúan con color (no con opacidad),
+     de modo que siguen cumpliendo el contraste mínimo de lectura. */
+  .service__name,
+  .service__description,
+  .service__benefit {
+    transition:
+      color 0.7s var(--ease-out),
+      border-color 0.7s var(--ease-out),
+      transform 0.9s var(--ease-out);
+    transform-origin: left center;
+  }
+
+  .service[data-active='false'] .service__name {
+    color: #6f7598;
+    transform: scale(0.94);
+  }
+
+  .service[data-active='false'] .service__description,
+  .service[data-active='false'] .service__benefit {
+    color: var(--ash);
+  }
+
+  .service[data-active='false'] .service__benefit {
+    border-left-color: var(--line-strong);
+  }
+
+  .service[data-active='false'] .service__index span {
+    color: var(--ash);
+  }
+
+  .service__slot {
+    display: none;
+  }
+
+  .services__stage {
+    display: block;
+  }
+
+  .services__stage-inner {
+    position: sticky;
+    top: 0;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    height: 100vh;
+    padding-block: calc(var(--header-h) + 12px) 32px;
+  }
+
+  .services__slot {
+    display: grid;
+    place-items: center;
+    min-height: 0;
+    color: var(--bone-2);
+  }
+
+  .services__caption {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 24px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+    color: var(--ash);
+  }
+
+  .services__figure {
+    animation: caption-in 0.8s var(--ease-out) both;
+  }
+
+  .services__figure span {
+    margin-right: 10px;
+    color: var(--lime);
+  }
+
+  .services__counter {
+    flex: none;
+  }
+
+  .services__counter b {
+    font-weight: 400;
+    color: var(--bone);
+  }
+}
+
+@keyframes caption-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}

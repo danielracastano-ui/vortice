@@ -1,0 +1,93 @@
+.about {
+  display: flex;
+  align-items: center;
+  min-height: 118vh;
+}
+
+.about__grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  align-items: end;
+}
+
+/* Columna izquierda: espacio para la pieza 3D explosionada y su leyenda. */
+.about__figure {
+  grid-column: 1 / span 5;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.about__figure span {
+  color: var(--lime);
+  margin-right: 10px;
+}
+
+.about__content {
+  grid-column: 7 / -1;
+  display: grid;
+  gap: clamp(28px, 4vw, 56px);
+}
+
+.about__statement {
+  font-size: clamp(1.75rem, 3.15vw, 3.5rem);
+  font-weight: 520;
+  font-variation-settings: 'wdth' 90;
+  letter-spacing: -0.032em;
+  line-height: 1.06;
+}
+
+.about__pillars {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gutter);
+}
+
+.about__pillar {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line-strong);
+}
+
+.about__pillar h3 {
+  font-weight: 400;
+  color: var(--violet-soft);
+}
+
+.about__pillar p {
+  color: var(--bone-2);
+  font-size: 1rem;
+}
+
+@media (max-width: 1100px) {
+  .about__pillars {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 899px) {
+  .about {
+    min-height: 0;
+    align-items: flex-start;
+  }
+
+  .about__grid {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 32px;
+  }
+
+  .about__figure {
+    grid-column: 1;
+    /* Reserva el alto donde flota la pieza en móvil. */
+    margin-top: 46vh;
+  }
+
+  .about__content {
+    grid-column: 1;
+  }
+}

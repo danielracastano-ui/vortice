@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>%VITE_SITE_NAME% — Diseño web, desarrollo y soluciones digitales</title>
+    <meta
+      name="description"
+      content="%VITE_SITE_NAME% es un estudio de diseño, desarrollo web y soluciones digitales: sitios web, tiendas en línea, plataformas y automatización de procesos a la medida de tu negocio."
+    />
+    <meta name="theme-color" content="#090e21" />
+    <meta name="color-scheme" content="dark" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es" />
+    <meta property="og:title" content="%VITE_SITE_NAME% — Diseño web, desarrollo y soluciones digitales" />
+    <meta
+      property="og:description"
+      content="Sitios web, tiendas en línea, plataformas y automatización de procesos a la medida de tu negocio."
+    />
+    <meta property="og:image" content="%VITE_SITE_URL%/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="1200" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <style>
+      html { background: #090e21; color: #f4f5fb; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <!--
+      Netlify Forms detecta los formularios leyendo el HTML ya construido. El
+      formulario real lo dibuja React, así que este gemelo oculto declara su
+      nombre y sus campos. Si cambias un campo allí, cámbialo también aquí.
+    -->
+    <form name="contacto" data-netlify="true" netlify-honeypot="website" hidden>
+      <input name="name" />
+      <input name="email" />
+      <input name="company" />
+      <input name="services" />
+      <textarea name="message"></textarea>
+      <input name="consent" />
+      <input name="page" />
+      <input name="website" />
+    </form>
+    <noscript>
+      <p style="padding: 2rem; font-family: system-ui, sans-serif">
+        Este sitio necesita JavaScript para mostrar su experiencia completa.
+      </p>
+    </noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

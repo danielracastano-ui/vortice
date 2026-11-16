@@ -1,0 +1,62 @@
+/*
+ * Sistema visual — extraído del logotipo de Vórtice
+ *
+ * Noche:   el azul casi negro del fondo del logo (#090e21). Es el espacio donde orbita todo.
+ * Blanco:  el blanco del nombre, apenas frío, para tipografía y cerámica.
+ * Violeta: el degradado índigo → violeta de los anillos. Color principal de marca.
+ * Lima:    el punto del logo. Se usa igual que allí: muy poco y solo para señalar.
+ */
+:root {
+  /* Color */
+  --ink: #090e21;
+  --ink-2: #0d1329;
+  --ink-3: #151c3a;
+  --steel: #2a3158;
+  --bone: #f4f5fb;
+  --bone-2: #c6cae0;
+  --ash: #9097b8;
+  --violet: #5b4dfd;
+  --violet-deep: #4b1de9;
+  --violet-soft: #a79bff;
+  --lime: #ccff0e;
+  --brand-gradient: linear-gradient(45deg, #4b1de9, #4d4dfe 50%, #7d4aff);
+  --danger: #ff8f8f;
+  --ok: #9fe0b0;
+  --line: rgb(198 202 224 / 0.14);
+  --line-strong: rgb(198 202 224 / 0.3);
+
+  /* Tipografía */
+  --font-display: 'Bricolage Grotesque Variable', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  /* La del nombre en el logotipo: solo se usa para escribir la marca. */
+  --font-brand: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+
+  --fs-display: clamp(3.4rem, 11.2vw, 12rem);
+  --fs-h2: clamp(2.6rem, 6.6vw, 7rem);
+  --fs-h3: clamp(1.7rem, 2.9vw, 2.9rem);
+  --fs-lead: clamp(1.125rem, 1.5vw, 1.55rem);
+  --fs-body: clamp(1rem, 1.05vw, 1.125rem);
+  --fs-small: 0.875rem;
+  --fs-mono: 0.75rem;
+
+  /* Espaciado y retícula */
+  --pad: clamp(20px, 4.4vw, 72px);
+  --gutter: clamp(16px, 2vw, 32px);
+  --section: clamp(96px, 14vw, 220px);
+  --header-h: 76px;
+
+  /* Movimiento */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-1: 0.25s;
+  --dur-2: 0.5s;
+  --dur-3: 0.9s;
+
+  --radius: 3px;
+  --z-backdrop: 0;
+  --z-content: 2;
+  --z-indicator: 20;
+  --z-header: 30;
+  --z-menu: 40;
+  --z-preloader: 60;
+}

@@ -1,0 +1,80 @@
+.indicator {
+  position: fixed;
+  top: 50%;
+  right: calc(var(--pad) * 0.38);
+  z-index: var(--z-indicator);
+  transform: translateY(-50%);
+  transition: opacity 1s var(--ease-out) 0.6s;
+}
+
+html[data-phase='loading'] .indicator {
+  opacity: 0;
+}
+
+.indicator ol {
+  display: grid;
+  justify-items: end;
+}
+
+.indicator a {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  height: 24px;
+  padding-left: 12px;
+  color: var(--ash);
+}
+
+.indicator__tick {
+  width: 14px;
+  height: 1.5px;
+  background: currentColor;
+  transition:
+    width 0.6s var(--ease-out),
+    background-color 0.3s;
+}
+
+.indicator__label {
+  padding: 4px 8px;
+  border-radius: 2px;
+  background: rgb(9 14 33 / 0.82);
+  font-size: 0.66rem;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(8px);
+  transition:
+    opacity 0.4s var(--ease-out),
+    transform 0.4s var(--ease-out);
+  pointer-events: none;
+}
+
+.indicator a:hover,
+.indicator a:focus-visible {
+  color: var(--bone);
+}
+
+.indicator:hover .indicator__label,
+.indicator a:focus-visible .indicator__label {
+  opacity: 1;
+  transform: none;
+}
+
+.indicator a:hover .indicator__tick {
+  width: 22px;
+}
+
+.indicator a[aria-current] {
+  color: var(--bone);
+}
+
+.indicator a[aria-current] .indicator__tick {
+  width: 30px;
+  background: var(--lime);
+}
+
+@media (max-width: 1100px), (max-height: 520px) {
+  .indicator {
+    display: none;
+  }
+}

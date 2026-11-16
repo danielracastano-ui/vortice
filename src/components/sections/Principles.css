@@ -1,0 +1,112 @@
+.principles {
+  min-height: 120vh;
+  display: flex;
+  align-items: center;
+}
+
+.principles__head {
+  display: grid;
+  gap: clamp(18px, 2.4vw, 32px);
+  max-width: 60rem;
+}
+
+.principles__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: clamp(40px, 6vw, 96px);
+  border-top: 1px solid var(--line-strong);
+}
+
+.principle {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  padding: clamp(24px, 2.6vw, 40px) clamp(16px, 2vw, 32px) clamp(32px, 4vw, 64px) 0;
+  border-bottom: 1px solid var(--line);
+  /* Velo que mantiene el texto legible mientras los bloques orbitan detrás. */
+  background: rgb(9 14 33 / 0.8);
+}
+
+.principle + .principle {
+  padding-left: clamp(16px, 2vw, 32px);
+  border-left: 1px solid var(--line);
+}
+
+.principle:nth-child(3n + 1) {
+  padding-left: 0;
+  border-left: 0;
+}
+
+/* Línea de lima que recorre el borde superior al pasar el cursor. */
+.principle::before {
+  content: '';
+  position: absolute;
+  inset: -1px 0 auto;
+  height: 2px;
+  background: var(--lime);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.8s var(--ease-out);
+}
+
+.principle__number {
+  color: var(--ash);
+  transition: color 0.3s;
+}
+
+.principle__title {
+  max-width: 14ch;
+  font-size: clamp(1.5rem, 2.3vw, 2.4rem);
+  font-weight: 580;
+  font-variation-settings: 'wdth' 86;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  transition: transform 0.7s var(--ease-out);
+}
+
+.principle p {
+  max-width: 30ch;
+  color: var(--bone-2);
+}
+
+@media (hover: hover) {
+  .principle:hover::before {
+    transform: scaleX(1);
+  }
+
+  .principle:hover .principle__number {
+    color: var(--lime);
+  }
+
+  .principle:hover .principle__title {
+    transform: translateX(8px);
+  }
+}
+
+@media (max-width: 1000px) {
+  .principles__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .principle:nth-child(n) {
+    padding-left: clamp(16px, 2vw, 32px);
+    border-left: 1px solid var(--line);
+  }
+
+  .principle:nth-child(2n + 1) {
+    padding-left: 0;
+    border-left: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .principles__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .principle:nth-child(n) {
+    padding-left: 0;
+    border-left: 0;
+  }
+}

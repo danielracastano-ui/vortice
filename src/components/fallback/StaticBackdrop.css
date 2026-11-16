@@ -1,0 +1,114 @@
+.static-backdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--ink);
+  perspective: 1400px;
+}
+
+.static-backdrop__glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(60vmax 50vmax at 78% 38%, rgb(91 77 253 / 0.16), transparent 60%),
+    radial-gradient(50vmax 50vmax at 12% 90%, rgb(125 74 255 / 0.1), transparent 60%);
+}
+
+.css-construct {
+  --u: clamp(46px, 7.5vmin, 96px);
+  position: absolute;
+  top: 40%;
+  right: clamp(16%, 24vw, 30%);
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  animation: css-construct-spin 48s linear infinite;
+  opacity: calc(1 - var(--away, 0) * 0.86);
+}
+
+@keyframes css-construct-spin {
+  from {
+    transform: rotateX(-24deg) rotateY(0deg);
+  }
+  to {
+    transform: rotateX(-24deg) rotateY(360deg);
+  }
+}
+
+.css-cube {
+  --w: 2;
+  --h: 2;
+  --d: 2;
+  --x: 0;
+  --y: 0;
+  --z: 0;
+  --face: #141a36;
+  position: absolute;
+  width: calc(var(--w) * var(--u));
+  height: calc(var(--h) * var(--u));
+  margin: calc(var(--h) * var(--u) / -2) 0 0 calc(var(--w) * var(--u) / -2);
+  transform: translate3d(calc(var(--x) * var(--u)), calc(var(--y) * var(--u)), calc(var(--z) * var(--u)));
+  transform-style: preserve-3d;
+}
+
+.css-cube i {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  background: var(--face);
+  box-shadow: inset 0 0 0 1px rgb(198 202 224 / 0.16);
+  backface-visibility: hidden;
+}
+
+/* frente / atrás */
+.css-cube i:nth-child(1) {
+  transform: translateZ(calc(var(--d) * var(--u) / 2));
+}
+.css-cube i:nth-child(2) {
+  transform: rotateY(180deg) translateZ(calc(var(--d) * var(--u) / 2));
+}
+/* derecha / izquierda */
+.css-cube i:nth-child(3),
+.css-cube i:nth-child(4) {
+  width: calc(var(--d) * var(--u));
+  filter: brightness(0.72);
+}
+.css-cube i:nth-child(3) {
+  transform: rotateY(90deg) translateZ(calc(var(--w) * var(--u) / 2));
+}
+.css-cube i:nth-child(4) {
+  transform: rotateY(-90deg) translateZ(calc(var(--w) * var(--u) / 2));
+}
+/* arriba / abajo */
+.css-cube i:nth-child(5),
+.css-cube i:nth-child(6) {
+  height: calc(var(--d) * var(--u));
+  filter: brightness(1.25);
+}
+.css-cube i:nth-child(5) {
+  transform: rotateX(90deg) translateZ(calc(var(--h) * var(--u) / 2));
+}
+.css-cube i:nth-child(6) {
+  transform: rotateX(-90deg) translateZ(calc(var(--h) * var(--u) / 2));
+}
+
+.css-cube--a { --w: 2; --h: 3; --d: 2; --x: -1.05; --y: 0.5; --z: -1.05; --face: #151c3a; }
+.css-cube--b { --w: 2; --h: 2; --d: 2; --x: 1.05; --y: 1; --z: -1.05; --face: #8e93b5; }
+.css-cube--c { --w: 4.1; --h: 1; --d: 2; --x: 0; --y: 1.5; --z: 1.05; --face: #e9eaf5; }
+.css-cube--d { --w: 1; --h: 1; --d: 1; --x: 1.55; --y: -0.6; --z: 1.55; --face: #ccff0e; }
+.css-cube--e { --w: 2; --h: 2; --d: 2; --x: -1.05; --y: -0.05; --z: 1.05; --face: #5b4dfd; }
+
+@media (max-width: 899px) {
+  .css-construct {
+    top: 24%;
+    right: 30%;
+    --u: clamp(30px, 9vmin, 60px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .css-construct {
+    animation: none;
+    transform: rotateX(-24deg) rotateY(38deg);
+  }
+}

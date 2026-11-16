@@ -1,0 +1,54 @@
+.cta {
+  position: relative;
+  z-index: var(--z-content);
+  padding-top: clamp(96px, 16vh, 200px);
+  text-align: center;
+}
+
+/* Espacio reservado bajo el mensaje: ahí emerge la pieza reensamblada. */
+.cta__stage {
+  height: 78vh;
+}
+
+@media (max-width: 899px), (max-aspect-ratio: 9 / 10) {
+  .cta__stage {
+    height: 56vh;
+  }
+}
+
+.cta__inner {
+  display: grid;
+  justify-items: center;
+  gap: clamp(20px, 3vh, 36px);
+}
+
+.cta__title {
+  font-size: clamp(3rem, 9.4vw, 10rem);
+}
+
+.cta__title > span[data-split] {
+  display: block;
+}
+
+.cta__text {
+  max-width: 34rem;
+  color: var(--bone);
+}
+
+.cta__actions {
+  display: grid;
+  justify-items: center;
+  gap: 20px;
+  margin-top: 8px;
+}
+
+@media (max-width: 520px) {
+  .cta__stage {
+    height: 46vh;
+  }
+
+  .cta__actions,
+  .cta__actions .btn {
+    width: 100%;
+  }
+}

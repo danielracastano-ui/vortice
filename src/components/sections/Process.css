@@ -1,0 +1,181 @@
+.process {
+  position: relative;
+  z-index: var(--z-content);
+  /* Altura del recorrido: una "pantalla" de scroll por etapa. */
+  height: 540vh;
+}
+
+.process__pin {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: clip;
+}
+
+.process__inner {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100%;
+  padding-top: calc(var(--header-h) + clamp(8px, 3vh, 40px));
+  padding-bottom: clamp(20px, 3.4vh, 40px);
+}
+
+.process__head {
+  display: grid;
+  gap: clamp(12px, 2vh, 24px);
+}
+
+.process__head .h2 {
+  font-size: clamp(2.2rem, 5vw, 5rem);
+}
+
+/* Las cinco etapas ocupan la misma celda; solo una es visible a la vez. */
+.process__steps {
+  display: grid;
+  align-self: center;
+  width: min(100%, 31rem);
+}
+
+.process-step {
+  grid-area: 1 / 1;
+  display: grid;
+  align-content: center;
+  gap: 16px;
+  transition:
+    opacity 0.6s var(--ease-out),
+    transform 0.9s var(--ease-out);
+}
+
+.process-step[data-state='next'] {
+  opacity: 0;
+  transform: translateY(40px);
+  pointer-events: none;
+}
+
+.process-step[data-state='past'] {
+  opacity: 0;
+  transform: translateY(-40px);
+  pointer-events: none;
+}
+
+.process-step__number {
+  font-size: clamp(4.5rem, 11vw, 10.5rem);
+  font-weight: 640;
+  font-variation-settings: 'wdth' 78;
+  letter-spacing: -0.06em;
+  line-height: 0.8;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--line-strong);
+}
+
+.process-step[data-state='active'] .process-step__number {
+  -webkit-text-stroke-color: var(--lime);
+}
+
+.process-step__text {
+  font-size: var(--fs-lead);
+  line-height: 1.42;
+  color: var(--bone-2);
+}
+
+.process-step__state {
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  color: var(--ash);
+}
+
+/* ───── Carril de progreso ───── */
+
+.process__rail {
+  position: relative;
+}
+
+.process__track {
+  display: block;
+  height: 1px;
+  background: var(--line-strong);
+}
+
+.process__track span {
+  display: block;
+  height: 3px;
+  margin-top: -1px;
+  background: var(--brand-gradient);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.process__rail ul {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.process__rail button {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  padding: 16px 8px 8px 0;
+  color: var(--ash);
+  text-align: left;
+  transition: color 0.3s;
+}
+
+.process__rail button:hover,
+.process__rail button[data-done='true'] {
+  color: var(--bone-2);
+}
+
+.process__rail button[aria-current] {
+  color: var(--bone);
+}
+
+.process__rail button[aria-current] span:first-child {
+  color: var(--lime);
+}
+
+@media (max-width: 899px) {
+  .process {
+    height: 480vh;
+  }
+
+  .process__head .h2 {
+    font-size: clamp(1.7rem, 7vw, 2.6rem);
+  }
+
+  /* En móvil la pieza flota arriba y el texto se apoya abajo. */
+  .process__steps {
+    align-self: end;
+    margin-bottom: clamp(16px, 3vh, 32px);
+  }
+
+  .process-step {
+    gap: 10px;
+  }
+
+  .process-step__number {
+    font-size: 3.4rem;
+  }
+
+  .process-step__text {
+    font-size: 1rem;
+  }
+
+  .process-step__state {
+    display: none;
+  }
+
+  .process__rail-name {
+    display: none;
+  }
+
+  .process__rail button {
+    min-height: 44px;
+  }
+}
+
+@media (max-height: 560px) {
+  .process-step__number {
+    font-size: 3rem;
+  }
+}
