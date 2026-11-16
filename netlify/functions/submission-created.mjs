@@ -10,6 +10,9 @@
  *
  *   WHATSAPP_PHONE    Número que recibe los avisos, con código de país. Ej.: +5215512345678
  *   WHATSAPP_APIKEY   Clave del servicio de envío (CallMeBot).
+ *
+ * Cada ejecución deja una línea en el registro de la función (Logs → Functions
+ * en Netlify) que dice qué ocurrió, sin incluir datos del visitante.
  */
 
 const FORM_NAME = 'contacto'
@@ -20,14 +23,13 @@ const providers = {
   /** CallMeBot: envía un WhatsApp al número que previamente autorizó al servicio. */
   async callmebot(text, env) {
     const phone = `+${String(env.WHATSAPP_PHONE).replace(/[^\d]/g, '')}`
-    const query = new URLSearchParams({ phone, text, apikey: env.WHATSAPP_APIKEY })
+    const query = new URLSearchParams({ phone, text, apikey: String(env.WHATSAPP_APIKEY).trim() })
     const response = await fetch(`https://api.callmebot.com/whatsapp.php?${query}`, {
       signal: AbortSignal.timeout(8000),
     })
-    if (!response.ok) {
-      const detail = (await response.text().catch(() => '')).slice(0, 200)
-      throw new Error(`CallMeBot respondió ${response.status}: ${detail}`)
-    }
+    const detail = (await response.text().catch(() => '')).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
+    if (!response.ok) throw new Error(`CallMeBot respondió ${response.status}: ${detail.slice(0, 200)}`)
+    return detail.slice(0, 200)
   },
 }
 
@@ -49,28 +51,54 @@ export function buildMessage(data) {
   return lines.join('\n')
 }
 
-export async function handler(event, _context, env = process.env) {
+/** Extrae el envío del formulario del evento que entrega Netlify. */
+function readPayload(event) {
+  const raw = event?.isBase64Encoded ? Buffer.from(event.body ?? '', 'base64').toString('utf8') : event?.body
+  return JSON.parse(raw || '{}').payload
+}
+
+/**
+ * Lógica del aviso, separada del punto de entrada para poder probarla con una
+ * configuración explícita. Devuelve la respuesta HTTP de la función.
+ */
+export async function notify(event, env) {
   let payload
   try {
-    payload = JSON.parse(event.body ?? '{}').payload
+    payload = readPayload(event)
   } catch {
+    console.error('Aviso por WhatsApp: el evento recibido no es JSON válido.')
     return { statusCode: 400, body: 'Cuerpo no válido' }
   }
 
   // Solo interesa el formulario de contacto.
-  if (!payload || payload.form_name !== FORM_NAME) return { statusCode: 200, body: 'Ignorado' }
+  const formName = payload?.form_name ?? payload?.data?.['form-name']
+  if (!payload || (formName && formName !== FORM_NAME)) {
+    console.log(`Aviso por WhatsApp: envío ignorado (formulario "${formName ?? 'desconocido'}").`)
+    return { statusCode: 200, body: 'Ignorado' }
+  }
 
-  if (!env.WHATSAPP_PHONE || !env.WHATSAPP_APIKEY) {
-    console.warn('Aviso por WhatsApp sin configurar: faltan WHATSAPP_PHONE o WHATSAPP_APIKEY.')
+  const missing = ['WHATSAPP_PHONE', 'WHATSAPP_APIKEY'].filter((name) => !String(env[name] ?? '').trim())
+  if (missing.length > 0) {
+    console.error(`Aviso por WhatsApp sin configurar: falta ${missing.join(' y ')} en las variables de entorno.`)
     return { statusCode: 200, body: 'Sin configurar' }
   }
 
   try {
-    await providers.callmebot(buildMessage(payload.data ?? {}), env)
+    const reply = await providers.callmebot(buildMessage(payload.data ?? {}), env)
+    console.log(`Aviso por WhatsApp enviado. Respuesta del servicio: ${reply || '(vacía)'}`)
     return { statusCode: 200, body: 'Aviso enviado' }
   } catch (error) {
     // El envío sigue guardado en Netlify; el fallo queda en el registro de la función.
-    console.error('No se pudo enviar el aviso por WhatsApp:', error)
+    console.error('No se pudo enviar el aviso por WhatsApp:', error?.message ?? error)
     return { statusCode: 502, body: 'Fallo al enviar el aviso' }
   }
+}
+
+/**
+ * Punto de entrada que invoca Netlify. Solo usa el primer argumento: la
+ * plataforma puede pasar otros (contexto, callback) que no deben confundirse
+ * con la configuración.
+ */
+export async function handler(event) {
+  return notify(event, process.env)
 }
