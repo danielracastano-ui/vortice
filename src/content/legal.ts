@@ -49,7 +49,7 @@ export const legalDocs: Record<'privacidad' | 'terminos', LegalDoc> = {
       {
         heading: 'Con quién los compartimos',
         body: [
-          'No vendemos ni cedemos tus datos personales. Solo pueden acceder a ellos los proveedores tecnológicos que nos prestan servicios necesarios para operar: el servicio de alojamiento del sitio, que almacena los mensajes del formulario, y el servicio de mensajería que nos avisa de cada mensaje nuevo. Ambos actúan conforme a nuestras instrucciones. También podrían acceder las autoridades cuando una obligación legal lo exija.',
+          'No vendemos ni cedemos tus datos personales. Solo pueden acceder a ellos los proveedores tecnológicos que nos prestan servicios necesarios para operar: el servicio de alojamiento del sitio, por el que pasa el formulario, y el servicio de mensajería que nos hace llegar cada mensaje por WhatsApp. Ambos actúan conforme a nuestras instrucciones. También podrían acceder las autoridades cuando una obligación legal lo exija.',
         ],
       },
       {

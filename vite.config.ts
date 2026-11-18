@@ -3,33 +3,38 @@ import react from '@vitejs/plugin-react'
 import { defineConfig, type Plugin } from 'vite'
 
 /**
- * Endpoint de contacto simulado, solo en `vite dev`.
- * Permite probar el flujo real del formulario (carga, éxito, error) sin backend.
+ * Función de contacto simulada, solo en `vite dev`, en la misma ruta que en
+ * Netlify. Valida con el mismo código que la función real pero no envía nada.
  */
-function devContactEndpoint(): Plugin {
+function devContactFunction(): Plugin {
   return {
-    name: 'dev-contact-endpoint',
+    name: 'dev-contact-function',
     apply: 'serve',
     configureServer(server) {
-      server.middlewares.use('/api/contact', (req, res) => {
+      server.middlewares.use('/.netlify/functions/contacto', (req, res) => {
         res.setHeader('Content-Type', 'application/json')
         if (req.method !== 'POST') {
           res.statusCode = 405
-          res.end(JSON.stringify({ ok: false }))
+          res.end(JSON.stringify({ ok: false, error: 'method' }))
           return
         }
         let body = ''
         req.on('data', (chunk) => (body += chunk))
-        req.on('end', () => {
+        req.on('end', async () => {
+          const { parseFields } = await import('./netlify/functions/contacto.mjs')
+          let fields = null
           try {
-            const data = JSON.parse(body) as Record<string, unknown>
-            if (!data.email || !data.message) throw new Error('invalid')
-            server.config.logger.info(`[contacto:dev] ${JSON.stringify(data)}`)
-            res.end(JSON.stringify({ ok: true }))
+            fields = parseFields(JSON.parse(body))
           } catch {
-            res.statusCode = 400
-            res.end(JSON.stringify({ ok: false }))
+            fields = null
           }
+          if (!fields) {
+            res.statusCode = 400
+            res.end(JSON.stringify({ ok: false, error: 'invalid' }))
+            return
+          }
+          server.config.logger.info(`[contacto:dev] mensaje válido de ${fields.email} (no se envía en desarrollo)`)
+          res.end(JSON.stringify({ ok: true }))
         })
       })
     },
@@ -37,7 +42,7 @@ function devContactEndpoint(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [react(), devContactEndpoint()],
+  plugins: [react(), devContactFunction()],
   build: {
     target: 'es2022',
     rollupOptions: {

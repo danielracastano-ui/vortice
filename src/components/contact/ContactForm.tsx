@@ -16,15 +16,22 @@ type Status = 'idle' | 'submitting' | 'success' | 'error'
 const empty: ContactPayload = { name: '', email: '', company: '', services: [], message: '' }
 const ERROR_ORDER = ['name', 'email', 'message', 'consent'] as const
 
-/** Explica el fallo con su causa: sirve al visitante y permite diagnosticar. */
+/**
+ * Explica el fallo al visitante. El código entre paréntesis no le dice nada a
+ * él, pero permite saber exactamente qué falló si nos envía una captura.
+ */
 function failureText(error: ContactError | null): string {
   switch (error?.kind) {
     case 'timeout':
       return 'El envío está tardando demasiado. Inténtalo de nuevo en un momento.'
-    case 'rejected':
-      return `El servidor no aceptó el mensaje (código ${error.status}). Inténtalo de nuevo más tarde.`
-    default:
+    case 'offline':
       return 'No pudimos conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.'
+    case 'invalid':
+      return 'Revisa los datos del formulario e inténtalo de nuevo.'
+    default:
+      return `No pudimos entregar tu mensaje en este momento (${error?.kind ?? 'error'}${
+        error?.status ? ` ${error.status}` : ''
+      }). Inténtalo de nuevo más tarde.`
   }
 }
 
@@ -66,8 +73,8 @@ export function ContactForm({ onDone }: { onDone: () => void }) {
 
     setStatus('submitting')
     try {
-      // Campo trampa: si un bot lo rellena, se descarta en silencio.
-      if (!honeypot) await submitContact(values)
+      // Campo trampa: si un bot lo rellena, el servidor lo descarta en silencio.
+      await submitContact(values, honeypot)
       setStatus('success')
       requestAnimationFrame(() => successRef.current?.focus())
     } catch (error) {

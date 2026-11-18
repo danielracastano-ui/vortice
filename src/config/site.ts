@@ -25,8 +25,8 @@ export interface ContactInfo {
   /** Ciudad / país o dirección. */
   location: string
   /**
-   * Endpoint alternativo para el formulario (POST JSON). Vacío = Netlify Forms,
-   * que es el modo de producción. Se define en `.env`.
+   * Endpoint alternativo para el formulario (POST JSON). Vacío = la función de
+   * Netlify /.netlify/functions/contacto. Se define en `.env`.
    */
   formEndpoint: string
 }

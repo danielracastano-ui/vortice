@@ -41,21 +41,26 @@ Los datos vacíos no se muestran: el sitio no inventa contactos, redes ni proyec
 
 ### Formulario de contacto
 
-En producción el formulario usa **Netlify Forms**:
-
-1. El visitante envía el formulario.
-2. Netlify guarda el mensaje (se ve en el panel del sitio, sección *Forms*).
-3. Netlify ejecuta `netlify/functions/submission-created.mjs`, que envía un aviso
-   por WhatsApp con el contenido.
+El formulario envía los datos (JSON) a la función de Netlify
+`netlify/functions/contacto.mjs`, publicada en `/.netlify/functions/contacto`,
+que los valida y los manda por WhatsApp. No usa Netlify Forms, así que no
+depende de activar nada en el panel de Netlify.
 
 El número de WhatsApp **no está en el código ni en la página**: la función lo lee
-de las variables de entorno de Netlify. Si el aviso falla, el mensaje sigue
-guardado en Netlify.
+de las variables de entorno de Netlify. Los mensajes no se guardan en ningún
+panel: el WhatsApp es el registro.
 
-En `npm run dev` el formulario va a un endpoint simulado (`/api/contact`,
-definido en `vite.config.ts`) para probar los estados de envío sin Netlify.
+Si un envío falla, el formulario muestra un código que indica la causa:
 
-`npm test` ejecuta las pruebas de la función de aviso.
+| Código | Causa |
+| --- | --- |
+| `unavailable 404` | La función no está en el sitio publicado (revisar el despliegue). |
+| `not_configured 503` | Faltan `WHATSAPP_PHONE` o `WHATSAPP_APIKEY` en Netlify. |
+| `delivery 502` | CallMeBot rechazó el envío (normalmente, la clave). |
+
+El detalle de cada envío queda en **Logs → Functions → contacto**, sin datos del
+visitante. En `npm run dev` la misma ruta responde una versión simulada que valida
+igual pero no envía nada. `npm test` ejecuta las pruebas de la función.
 
 ### Portafolio
 
@@ -66,27 +71,20 @@ abre el sitio en desarrollo con `?demo` en la URL (no se incluyen en producción
 
 ## Publicar en Netlify
 
-1. Sube el proyecto a un repositorio de GitHub y, en Netlify, crea un sitio
-   nuevo a partir de él. `netlify.toml` ya indica cómo construirlo.
-2. En el panel del sitio, abre **Forms** y activa la detección de formularios.
-   Después vuelve a desplegar: Netlify debe listar un formulario llamado `contacto`.
-   El formulario se declara en `public/__forms.html` y el build comprueba que esté completo.
-3. En **Site configuration → Environment variables** añade:
-   - `WHATSAPP_PHONE`: el número que recibirá los avisos, con código de país.
+1. En Netlify, crea un sitio a partir de este repositorio de GitHub.
+   `netlify.toml` ya indica cómo construirlo y dónde está la función.
+2. En **Site configuration → Environment variables** añade:
+   - `WHATSAPP_PHONE`: el número que recibirá los mensajes, con código de país.
    - `WHATSAPP_APIKEY`: la clave que entrega CallMeBot al autorizar ese número
      (las instrucciones están en callmebot.com).
-4. Vuelve a desplegar y envía un mensaje de prueba desde el sitio publicado.
-5. Recomendado: en **Forms → Form notifications** añade también un aviso por
-   correo, como respaldo del WhatsApp.
+3. Vuelve a desplegar (las variables solo se aplican en despliegues nuevos).
+4. En **Logs → Functions** debe aparecer la función `contacto`.
+5. Envía un mensaje de prueba desde el sitio publicado.
 6. Cuando tengas el dominio, escríbelo en `.env` → `VITE_SITE_URL`.
 
-Notas:
-
-- La función `submission-created` solo se ejecuta en el sitio publicado, no en
-  las vistas previas de despliegue.
-- El plan gratuito de CallMeBot está pensado para uso personal. Para un uso
-  comercial sostenido, el camino oficial es la plataforma de WhatsApp Business
-  de Meta; la función tiene un punto de extensión (`providers`) para añadirla.
+Nota: el plan gratuito de CallMeBot está pensado para uso personal. Para un uso
+comercial sostenido, el camino oficial es la plataforma de WhatsApp Business de
+Meta; la función tiene un punto de extensión (`providers`) para añadirla.
 
 ## Identidad
 
@@ -100,8 +98,9 @@ Bold, como en el logotipo; los titulares usan Bricolage Grotesque.
 
 ```
 index.html · privacidad/ · terminos/   Entradas HTML (sitio multipágina)
-netlify.toml · netlify/functions/      Despliegue y función de aviso por WhatsApp
+netlify.toml · netlify/functions/      Despliegue y función del formulario (envío por WhatsApp)
 tests/                                Pruebas de la función
+types/                                Tipos para usar la función desde vite.config.ts
 src/
   config/site.ts        Marca, contacto, redes, navegación
   content/              Textos: servicios, proceso, principios, proyectos, legal
