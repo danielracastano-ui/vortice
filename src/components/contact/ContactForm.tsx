@@ -41,7 +41,6 @@ export function ContactForm({ onDone }: { onDone: () => void }) {
   const successRef = useRef<HTMLDivElement>(null)
   const [values, setValues] = useState<ContactPayload>(empty)
   const [consent, setConsent] = useState(false)
-  const [honeypot, setHoneypot] = useState('')
   const [errors, setErrors] = useState<ContactErrors>({})
   const [status, setStatus] = useState<Status>('idle')
   const [failure, setFailure] = useState<ContactError | null>(null)
@@ -73,8 +72,7 @@ export function ContactForm({ onDone }: { onDone: () => void }) {
 
     setStatus('submitting')
     try {
-      // Campo trampa: si un bot lo rellena, el servidor lo descarta en silencio.
-      await submitContact(values, honeypot)
+      await submitContact(values)
       setStatus('success')
       requestAnimationFrame(() => successRef.current?.focus())
     } catch (error) {
@@ -190,20 +188,6 @@ export function ContactForm({ onDone }: { onDone: () => void }) {
           aria-describedby={describe('message')}
         />
         {fieldError('message')}
-      </div>
-
-      {/* Campo trampa anti-spam: invisible para personas y lectores de pantalla. */}
-      <div className="contact-form__trap" aria-hidden="true">
-        <label htmlFor={`${id}-website`}>No rellenes este campo</label>
-        <input
-          id={`${id}-website`}
-          name="website"
-          type="text"
-          tabIndex={-1}
-          autoComplete="off"
-          value={honeypot}
-          onChange={(e) => setHoneypot(e.target.value)}
-        />
       </div>
 
       <div className="consent" data-invalid={Boolean(errors.consent)}>

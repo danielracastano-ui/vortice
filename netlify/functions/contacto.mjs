@@ -103,8 +103,9 @@ export async function receive(event, env) {
     return json(400, { ok: false, error: 'invalid' })
   }
 
-  // Campo trampa: las personas no lo ven; si viene relleno es un bot. Se responde
-  // como si todo hubiera ido bien para no darle pistas.
+  // Campo trampa para envíos automatizados que llaman a la función directamente.
+  // El formulario del sitio no lo envía (un campo oculto en la página podía
+  // rellenarlo el autocompletado del navegador y descartar mensajes reales).
   if (String(input?.website ?? '').trim()) {
     console.log('Contacto: envío descartado por el campo trampa.')
     return json(200, { ok: true })

@@ -66,7 +66,7 @@ const SERVER_ERRORS: readonly ContactFailure[] = ['not_configured', 'delivery', 
  * Envía el formulario de contacto como JSON a la función de Netlify
  * (o a VITE_CONTACT_ENDPOINT, si está definido).
  */
-export async function submitContact(values: ContactPayload, honeypot = ''): Promise<void> {
+export async function submitContact(values: ContactPayload): Promise<void> {
   const body = {
     name: values.name.trim(),
     email: values.email.trim(),
@@ -75,7 +75,6 @@ export async function submitContact(values: ContactPayload, honeypot = ''): Prom
     services: values.services.map((id) => services.find((service) => service.id === id)?.name ?? id),
     message: values.message.trim(),
     page: window.location.href,
-    website: honeypot,
   }
 
   const controller = new AbortController()
