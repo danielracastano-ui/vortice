@@ -89,10 +89,14 @@ export function ContactForm({ onDone }: { onDone: () => void }) {
           <Check width={22} height={22} />
         </span>
         <h3 className="h3">Mensaje enviado</h3>
-        <p className="lead">
-          Gracias, {values.name.trim().split(' ')[0]}. Recibimos tu mensaje y te responderemos al
-          correo que nos dejaste.
-        </p>
+        <p className="lead">Gracias, {values.name.trim().split(' ')[0]}. Ya recibimos tu mensaje.</p>
+        <div className="contact-success__note">
+          <p>
+            <strong>Revisa tu correo en los próximos días:</strong> te enviaremos nuestra
+            respuesta a <span className="contact-success__email">{values.email.trim()}</span>.
+          </p>
+          <p>Si no la ves en tu bandeja de entrada, busca también en la carpeta de spam o correo no deseado.</p>
+        </div>
         <Button variant="ghost" icon="none" onClick={onDone}>
           Cerrar
         </Button>

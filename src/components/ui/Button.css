@@ -178,3 +178,9 @@
     transform: translate(3px, -3px);
   }
 }
+
+/* Sin icono, el texto queda centrado con el mismo margen a ambos lados. */
+.btn:not(:has(.btn__icon)) {
+  justify-content: center;
+  padding-inline: 24px;
+}

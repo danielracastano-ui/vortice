@@ -336,6 +336,25 @@
   outline: none;
 }
 
+.contact-success__note {
+  display: grid;
+  gap: 8px;
+  max-width: 34rem;
+  padding: 4px 0 4px 18px;
+  border-left: 1px solid var(--violet);
+  color: var(--bone-2);
+}
+
+.contact-success__note strong {
+  font-weight: 600;
+  color: var(--bone);
+}
+
+.contact-success__email {
+  color: var(--bone);
+  overflow-wrap: anywhere;
+}
+
 .contact-success__icon {
   display: grid;
   place-items: center;
