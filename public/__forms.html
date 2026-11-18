@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="noindex" />
+    <title>Formularios</title>
+  </head>
+  <body>
+    <!--
+      Archivo técnico para Netlify Forms. No es una página para visitantes.
+
+      Netlify registra los formularios leyendo el HTML estático del despliegue.
+      El formulario real lo dibuja React, así que este archivo declara su nombre
+      y sus campos, y el sitio envía los datos aquí (POST /__forms.html).
+      Si cambias un campo en src/lib/contact.ts, cámbialo también aquí.
+    -->
+    <form name="contacto" method="POST" data-netlify="true" netlify-honeypot="website">
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <input type="text" name="company" />
+      <input type="text" name="services" />
+      <textarea name="message"></textarea>
+      <input type="text" name="consent" />
+      <input type="text" name="page" />
+      <input type="text" name="website" />
+    </form>
+  </body>
+</html>

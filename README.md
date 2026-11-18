@@ -70,6 +70,7 @@ abre el sitio en desarrollo con `?demo` en la URL (no se incluyen en producción
    nuevo a partir de él. `netlify.toml` ya indica cómo construirlo.
 2. En el panel del sitio, abre **Forms** y activa la detección de formularios.
    Después vuelve a desplegar: Netlify debe listar un formulario llamado `contacto`.
+   El formulario se declara en `public/__forms.html` y el build comprueba que esté completo.
 3. En **Site configuration → Environment variables** añade:
    - `WHATSAPP_PHONE`: el número que recibirá los avisos, con código de país.
    - `WHATSAPP_APIKEY`: la clave que entrega CallMeBot al autorizar ese número

@@ -46,8 +46,11 @@ export class ContactError extends Error {
   }
 }
 
-/** Nombre del formulario en Netlify Forms. Debe coincidir con el <form> estático de index.html. */
+/** Nombre del formulario en Netlify Forms. Debe coincidir con el <form> de public/__forms.html. */
 export const NETLIFY_FORM_NAME = 'contacto'
+
+/** Archivo estático donde Netlify registra el formulario y al que se envían los datos. */
+const NETLIFY_FORM_PATH = '/__forms.html'
 
 /**
  * Envía el formulario de contacto.
@@ -89,7 +92,7 @@ export async function submitContact(values: ContactPayload): Promise<void> {
   const timeout = window.setTimeout(() => controller.abort(), SUBMIT_TIMEOUT_MS)
   let response: Response
   try {
-    response = await fetch(endpoint || '/', { method: 'POST', ...request, signal: controller.signal })
+    response = await fetch(endpoint || NETLIFY_FORM_PATH, { method: 'POST', ...request, signal: controller.signal })
   } catch (cause) {
     // fetch solo lanza si se agotó el tiempo o si no hubo respuesta del servidor.
     throw new ContactError(controller.signal.aborted ? 'timeout' : 'offline', undefined, cause)
