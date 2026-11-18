@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { afterEach, beforeEach, test } from 'node:test'
-import { buildMessage, handler, parseFields, receive } from '../netlify/functions/contacto.mjs'
+import { buildMessage, handler, isCallmebotSuccess, parseFields, receive } from '../netlify/functions/contacto.mjs'
 
 const env = { WHATSAPP_PHONE: '+57 300 0000000', WHATSAPP_APIKEY: 'clave-de-prueba' }
 const fields = {
@@ -129,4 +129,19 @@ test('recorta campos demasiado largos y mensajes extensos', () => {
     buildMessage({ name: 'Ana', email: 'a@b.co', message: 'Hola' }),
     '*Nuevo mensaje desde la web*\n*Nombre:* Ana\n*Correo:* a@b.co\n\nHola',
   )
+})
+
+test('una respuesta 200 que no confirma el envío cuenta como fallo', async () => {
+  for (const reply of ['APIKey is invalid. Please check it.', 'Error: Phone number not valid', '', '<html><body>Something went wrong</body></html>']) {
+    globalThis.fetch = async () => new Response(reply, { status: 200 })
+    const result = await receive(post(fields), env)
+    assert.equal(result.statusCode, 502, `debería fallar con: ${reply || '(vacía)'}`)
+    assert.deepEqual(parse(result), { ok: false, error: 'delivery' })
+  }
+})
+
+test('reconoce las confirmaciones de CallMeBot', () => {
+  assert.ok(isCallmebotSuccess('Message queued. You will receive it in a few seconds.'))
+  assert.ok(isCallmebotSuccess('<p><b>Message Sent</b> to +573183639626</p>'))
+  assert.ok(!isCallmebotSuccess('Message not sent. Error: APIKey is invalid'))
 })

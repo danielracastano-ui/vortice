@@ -33,6 +33,17 @@ const json = (statusCode, body) => ({
   body: JSON.stringify(body),
 })
 
+/**
+ * ¿La respuesta de CallMeBot confirma el envío? Solo se acepta si dice que el
+ * mensaje quedó en cola o fue enviado y no menciona ningún error.
+ */
+export function isCallmebotSuccess(reply) {
+  const text = String(reply ?? '')
+  const confirmed = /\b(queued|sent)\b/i.test(text)
+  const failed = /\b(error|invalid|not valid|not allowed|denied|blocked|wrong|fail(ed)?|need to|disabled)\b/i.test(text)
+  return confirmed && !failed
+}
+
 /** Proveedores de envío. Para usar otro servicio (p. ej. WhatsApp Business), añade aquí su función. */
 const providers = {
   /** CallMeBot: envía un WhatsApp al número que previamente autorizó al servicio. */
@@ -44,6 +55,8 @@ const providers = {
     })
     const detail = (await response.text().catch(() => '')).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
     if (!response.ok) throw new Error(`CallMeBot respondió ${response.status}: ${detail.slice(0, 200)}`)
+    // CallMeBot puede responder 200 aunque no envíe nada: el resultado real va en el texto.
+    if (!isCallmebotSuccess(detail)) throw new Error(`CallMeBot no confirmó el envío: ${detail.slice(0, 200) || '(respuesta vacía)'}`)
     return detail.slice(0, 200)
   },
 }
