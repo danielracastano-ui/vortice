@@ -59,7 +59,13 @@ test('el punto de entrada lee process.env aunque Netlify pase más argumentos', 
   assert.equal(new URL(calls[0]).searchParams.get('apikey'), 'clave-del-entorno')
 })
 
-test('sin variables de entorno responde not_configured y no llama al servicio', async () => {
+test('sin WHATSAPP_PHONE usa el número del código', async () => {
+  const result = await receive(post(fields), { WHATSAPP_APIKEY: 'clave-de-prueba' })
+  assert.deepEqual(parse(result), { ok: true })
+  assert.equal(new URL(calls[0]).searchParams.get('phone'), '+573183639626')
+})
+
+test('sin la clave responde not_configured y no llama al servicio', async () => {
   const result = await handler(post(fields))
   assert.equal(result.statusCode, 503)
   assert.deepEqual(parse(result), { ok: false, error: 'not_configured' })

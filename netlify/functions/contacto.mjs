@@ -5,11 +5,12 @@
  * esta función automáticamente con cada despliegue desde GitHub: no depende de
  * ninguna opción del panel (a diferencia de Netlify Forms).
  *
- * El número de destino NO está en el sitio ni en este archivo. Se lee de las
+ * El número de destino está en DEFAULT_PHONE (aquí, en el servidor: no aparece
+ * en la página que ven los visitantes). La clave del servicio se lee de las
  * variables de entorno de Netlify (Site configuration → Environment variables):
  *
- *   WHATSAPP_PHONE    Número que recibe los mensajes, con código de país. Ej.: +57 300 0000000
- *   WHATSAPP_APIKEY   Clave del servicio de envío (CallMeBot).
+ *   WHATSAPP_APIKEY   Clave del servicio de envío (CallMeBot). Obligatoria.
+ *   WHATSAPP_PHONE    Opcional: si se define, reemplaza a DEFAULT_PHONE.
  *
  * Respuestas (JSON): { ok: true } o { ok: false, error }, donde error es
  *   invalid         los datos no son válidos (400)
@@ -18,6 +19,9 @@
  *
  * Cada ejecución deja una línea en Logs → Functions → contacto, sin datos del visitante.
  */
+
+/** Número que recibe los mensajes del formulario. */
+const DEFAULT_PHONE = '+57 318 3639626'
 
 const LIMITS = { name: 120, email: 200, company: 160, services: 300, message: 4000, page: 500 }
 const MAX_WHATSAPP_MESSAGE = 900
@@ -99,14 +103,17 @@ export async function receive(event, env) {
     return json(400, { ok: false, error: 'invalid' })
   }
 
-  const missing = ['WHATSAPP_PHONE', 'WHATSAPP_APIKEY'].filter((name) => !String(env[name] ?? '').trim())
-  if (missing.length > 0) {
-    console.error(`Contacto sin configurar: falta ${missing.join(' y ')} en las variables de entorno de Netlify.`)
+  const config = {
+    WHATSAPP_PHONE: String(env.WHATSAPP_PHONE ?? '').trim() || DEFAULT_PHONE,
+    WHATSAPP_APIKEY: String(env.WHATSAPP_APIKEY ?? '').trim(),
+  }
+  if (!config.WHATSAPP_APIKEY) {
+    console.error('Contacto sin configurar: falta WHATSAPP_APIKEY en las variables de entorno de Netlify.')
     return json(503, { ok: false, error: 'not_configured' })
   }
 
   try {
-    const reply = await providers.callmebot(buildMessage(fields), env)
+    const reply = await providers.callmebot(buildMessage(fields), config)
     console.log(`Contacto: WhatsApp enviado. Respuesta del servicio: ${reply || '(vacía)'}`)
     return json(200, { ok: true })
   } catch (error) {
