@@ -56,5 +56,6 @@ export const projects: Project[] = [
       width: 1901,
       height: 863,
     },
+    url: 'https://quierecacao.netlify.app',
   },
 ]
